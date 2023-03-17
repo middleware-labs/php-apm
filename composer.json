@@ -1,0 +1,13 @@
+{
+    "name": "middleware/php-apm",
+    "require": {
+        "php": "^7.3"
+    },
+    "license": "Middleware",
+    "autoload": {
+        "psr-4": {
+            "Middleware\\PhpApm\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
