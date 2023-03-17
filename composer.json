@@ -3,7 +3,7 @@
     "require": {
         "php": "^7.3"
     },
-    "license": "Middleware",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Middleware\\PhpApmTest\\": "src/"
