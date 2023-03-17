@@ -1,13 +1,22 @@
 {
     "name": "middleware/php-apm-test",
-    "require": {
-        "php": "^7.3"
-    },
+    "description": "PHP APM Test-Package",
+    "keywords": ["apm"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Sanjay Suthar",
+            "email": "sanjay@middleware.io",
+            "homepage": "https://middleware.io/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
     "autoload": {
         "psr-4": {
             "Middleware\\PhpApmTest\\": "src/"
         }
-    },
-    "minimum-stability": "stable"
+    }
 }
