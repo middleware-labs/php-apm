@@ -2,7 +2,7 @@
 namespace Middleware\PhpApmTest;
 
 class Test {
-    public static function printString($str) {
+    public static function printString($str): void {
         echo $str;
     }
 
