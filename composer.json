@@ -2,6 +2,7 @@
     "name": "middleware/php-apm-test",
     "description": "PHP APM Test-Package",
     "keywords": ["apm"],
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
