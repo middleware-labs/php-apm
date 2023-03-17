@@ -6,4 +6,10 @@ class Test {
         echo $str;
     }
 
+    public static function printServerDetails($serverJson): void {
+        echo '<pre>';
+        print_r($serverJson);
+        echo '</pre>';
+    }
+
 }
