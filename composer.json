@@ -13,12 +13,24 @@
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "open-telemetry/sdk": "dev-main",
+        "symfony/http-client": "6.3.x-dev",
+        "guzzlehttp/promises": "^1.5@dev",
+        "php-http/message-factory": "^1.0@dev",
+        "nyholm/psr7": "^1.5",
+        "open-telemetry/opentelemetry": "dev-main",
+        "psr/http-client": "1.0.x-dev"
     },
     "autoload": {
         "psr-4": {
             "Middleware\\PhpApmTest\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
