@@ -29,7 +29,7 @@
             "Middleware\\PhpApmTest\\": "src/"
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
