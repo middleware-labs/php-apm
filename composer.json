@@ -27,6 +27,7 @@
             "Middleware\\PhpApmTest\\": "src/"
         }
     },
+    "minimum-stability": "stable",
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
