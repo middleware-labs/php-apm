@@ -1,5 +1,5 @@
 <?php
-namespace Middleware\PhpApmTest1;
+namespace Middleware\PhpApmTest;
 
 class Test {
     public static function printString($str): void {
