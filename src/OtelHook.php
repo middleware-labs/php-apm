@@ -26,7 +26,7 @@ putenv('OTEL_SERVICE_NAME=mw-php-app');
 echo 'Starting CollectorSpanExporter' . PHP_EOL;
 
 class DemoClass {
-    public function run() {
+    public static function run() {
         echo 'Hello..called.';
         $transport = (new OtlpHttpTransportFactory())->create('http://localhost:9321/v1/traces', 'application/x-protobuf');
         $exporter = new SpanExporter($transport);
