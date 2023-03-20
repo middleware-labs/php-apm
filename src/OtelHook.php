@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
+namespace Middleware\PhpApmTest;
 //https://opentelemetry.io/docs/instrumentation/php/automatic/
 
 //https://github.com/open-telemetry/opentelemetry-php-instrumentation
 
 //https://morioh.com/p/d1f7b1aed614
 
-declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
-
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
