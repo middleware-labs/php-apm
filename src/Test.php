@@ -39,6 +39,7 @@ $tracerProvider = new TracerProvider(
         $exporter
     )
 );
+global $tracer;
 $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
 class Test {
@@ -60,7 +61,7 @@ class Test {
         }
     }
 
-    /*public static function callOtelCodeBefore(): void {
+    public static function callOtelCodeBefore(): void {
         global $tracer;
         // $span = $tracer->spanBuilder('DemoClass')->startSpan();
         $span = $tracer->spanBuilder(sprintf('%s::%s', 'DemoClass', 'run'))
@@ -77,8 +78,8 @@ class Test {
         $span = Span::fromContext($scope->context());
         $span->setStatus(StatusCode::STATUS_OK);
         $span->end();
-    }*/
+    }
 
 }
 
-Test::printString('Hello..called. from DemoClass');
+//Test::printString('Hello..called. from DemoClass');
