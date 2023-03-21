@@ -37,7 +37,7 @@ $exporter = new SpanExporter($transport);
 
 $tracerProvider = new TracerProvider(
     new SimpleSpanProcessor($exporter),
-    new Attributes(['service.name' => 'mw-php-app'])
+    new Attributes(['service.name' => 'mw-php-app-test'])
 );
 
 global $tracer;
