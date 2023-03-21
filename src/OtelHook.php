@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 namespace Middleware\PhpApmTest;
+
+//"open-telemetry/sdk": "^1.0.0beta3",
+//"open-telemetry/api": "1.0.0beta4",
+
 //https://opentelemetry.io/docs/instrumentation/php/automatic/
 
 //https://github.com/open-telemetry/opentelemetry-php-instrumentation

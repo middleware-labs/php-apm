@@ -2,21 +2,43 @@
 declare(strict_types=1);
 namespace Middleware\PhpApmTest;
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
+use OpenTelemetry\Sdk\Trace\Span;
+use OpenTelemetry\Context\Context;
+use OpenTelemetry\Context\ContextValue;
+use OpenTelemetry\API\Trace\StatusCode;
+
 use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
 use OpenTelemetry\Contrib\Otlp\SpanExporter;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 
+//use function OpenTelemetry\Instrumentation\hook;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 use OpenTelemetry\SDK\Common\Instrumentation As Instrumentation;
+use OpenTelemetry\SemConv\TraceAttributes;
+use Psr\Http\Message\ResponseInterface;
+
+//use function OpenTelemetry\Instrumentation\hook;
 
 //putenv('OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:9321/v1/traces');
 //putenv('OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
 putenv('OTEL_PHP_AUTOLOAD_ENABLED=true');
 putenv('OTEL_SERVICE_NAME=mw-php-app');
+
+//echo 'Hello..called.';
+$transport = (new OtlpHttpTransportFactory())
+    ->create('http://localhost:9321/v1/traces', 'application/x-protobuf');
+$exporter = new SpanExporter($transport);
+
+$tracerProvider = new TracerProvider(
+    new SimpleSpanProcessor(
+        $exporter
+    )
+);
+$tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
 class Test {
     public static function printString($str): void {
@@ -35,49 +57,23 @@ class Test {
         }
     }
 
-    public static function run() {
-        echo 'Hello..called.';
-        $transport = (new OtlpHttpTransportFactory())->create('http://localhost:9321/v1/traces', 'application/x-protobuf');
-        $exporter = new SpanExporter($transport);
+    public static function callOtelCodeBefore(): void {
+        global $tracer;
+        // $span = $tracer->spanBuilder('DemoClass')->startSpan();
+        $span = $tracer->spanBuilder(sprintf('%s::%s', 'DemoClass', 'run'))
+            ->setAttribute('function', 'run()')
+            ->setAttribute('code.namespace', 'DemoClass')
+            ->setAttribute('code.filepath', 'TestOtel.php')
+            ->setAttribute('code.lineno', '122')->startSpan();
+        Context::storage()->attach($span->storeInContext(Context::getCurrent()));
+    }
 
-        $tracerProvider = new TracerProvider(
-            new SimpleSpanProcessor(
-                $exporter
-            )
-        );
-
-        //$tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
-        $tracer = new Tracer($tracerProvider);
-
-        Instrumentation\hook(
-            DemoClass::class,
-            'run',
-            static function (DemoClass $demo, array $params, string $class, string $function, ?string $filename, ?int $lineno) use ($tracer) {
-                /*static $instrumentation;
-                $instrumentation ??= new CachedInstrumentation('example');
-                $instrumentation->tracer()->spanBuilder($class)
-                    ->startSpan()
-                    ->activate();*/
-
-                $span = $tracer->spanBuilder($class)
-                    ->startSpan()
-                    ->activate();
-                Context::storage()->attach($span->storeInContext(Context::getCurrent()));
-            },
-            static function (DemoClass $demo, array $params, $returnValue, ?Throwable $exception) use ($tracer) {
-                $scope = Context::storage()->scope();
-                $scope->detach();
-                $span = Span::fromContext($scope->context());
-                if ($exception) {
-                    $span->recordException($exception);
-                    $span->setStatus(StatusCode::STATUS_ERROR);
-                }
-                $span->end();
-            }
-        );
-
-        $demo = new DemoClass();
-        $demo->run();
+    public static function callOtelCodeAfter(): void {
+        $scope = Context::storage()->scope();
+        $scope?->detach();
+        $span = Span::fromContext($scope->context());
+        $span->setStatus(StatusCode::STATUS_OK);
+        $span->end();
     }
 
 }
