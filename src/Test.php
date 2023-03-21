@@ -17,13 +17,13 @@ use OpenTelemetry\Contrib\Otlp\SpanExporter;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 
 use OpenTelemetry\SDK\Trace\TracerProvider;
-use OpenTelemetry\SDK\Resource\Attributes;
+//use OpenTelemetry\SDK\Resource\Attributes;
 
 
 //putenv('OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:9321/v1/traces');
 //putenv('OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
 putenv('OTEL_PHP_AUTOLOAD_ENABLED=true');
-//putenv('OTEL_SERVICE_NAME=mw-php-app');
+putenv('OTEL_SERVICE_NAME=mw-php-app');
 //$service = getenv('MW_PHP_SERVICE_NAME');
 //putenv('OTEL_SERVICE_NAME=' . $service);
 
@@ -37,7 +37,7 @@ $exporter = new SpanExporter($transport);
 
 $tracerProvider = new TracerProvider(
     new SimpleSpanProcessor($exporter),
-    new Attributes(['service.name' => 'mw-php-app-test'])
+//    new Attributes(['service.name' => 'mw-php-app-test'])
 );
 
 global $tracer;
