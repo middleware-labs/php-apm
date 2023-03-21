@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace Middleware\PhpApmTest;
 
-require __DIR__ . '/../vendor/autoload.php';
+require 'vendor/autoload.php';
+//require __DIR__ . '/../vendor/autoload.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
