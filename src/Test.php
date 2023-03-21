@@ -62,6 +62,8 @@ class Test {
     }
 
     public static function callOtelCodeBefore(?string $classname, string $functionname, ?string $filename, ?int $lineno): void {
+        echo get_called_class();
+        echo __FUNCTION__;
         global $tracer;
         // $span = $tracer->spanBuilder('DemoClass')->startSpan();
         $span = $tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
