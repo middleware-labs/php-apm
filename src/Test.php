@@ -66,7 +66,7 @@ class Test {
         global $tracer;
         // $span = $tracer->spanBuilder('DemoClass')->startSpan();
         $span = $tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
-            ->setAttribute('function', 'run()')
+            ->setAttribute('function', $functionname)
             ->setAttribute('code.namespace', $classname)
             ->setAttribute('code.filepath', $filename)
             ->setAttribute('code.lineno', $lineno)->startSpan();
@@ -84,7 +84,7 @@ class Test {
     public static function callOtelCodeCombined(?string $classname, string $functionname, ?string $filename, ?int $lineno): void {
         global $tracer;
         $span = $tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
-            ->setAttribute('function', 'run()')
+            ->setAttribute('function', $functionname)
             ->setAttribute('code.namespace', $classname)
             ->setAttribute('code.filepath', $filename)
             ->setAttribute('code.lineno', $lineno)->startSpan();
