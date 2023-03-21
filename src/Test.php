@@ -19,15 +19,17 @@ use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 //use function OpenTelemetry\Instrumentation\hook;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 use OpenTelemetry\SDK\Common\Instrumentation As Instrumentation;
-use OpenTelemetry\SemConv\TraceAttributes;
 use Psr\Http\Message\ResponseInterface;
+use OpenTelemetry\SDK\Resource\Attributes;
 
 //use function OpenTelemetry\Instrumentation\hook;
 
 //putenv('OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:9321/v1/traces');
 //putenv('OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
 putenv('OTEL_PHP_AUTOLOAD_ENABLED=true');
-putenv('OTEL_SERVICE_NAME=mw-php-app');
+//putenv('OTEL_SERVICE_NAME=mw-php-app');
+//$service = getenv('MW_PHP_SERVICE_NAME');
+//putenv('OTEL_SERVICE_NAME=' . $service);
 
 //echo 'Hello..called.';
 $transport = (new OtlpHttpTransportFactory())
@@ -35,9 +37,8 @@ $transport = (new OtlpHttpTransportFactory())
 $exporter = new SpanExporter($transport);
 
 $tracerProvider = new TracerProvider(
-    new SimpleSpanProcessor(
-        $exporter
-    )
+    new SimpleSpanProcessor($exporter),
+    new Attributes(['service.name' => 'mw-php-app123'])
 );
 global $tracer;
 $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
