@@ -61,14 +61,14 @@ class Test {
         }
     }
 
-    public static function callOtelCodeBefore(): void {
+    public static function callOtelCodeBefore(?string $classname, string $functionname, ?string $filename, ?int $lineno): void {
         global $tracer;
         // $span = $tracer->spanBuilder('DemoClass')->startSpan();
-        $span = $tracer->spanBuilder(sprintf('%s::%s', 'DemoClass', 'run'))
+        $span = $tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
             ->setAttribute('function', 'run()')
-            ->setAttribute('code.namespace', 'DemoClass')
-            ->setAttribute('code.filepath', 'TestOtel.php')
-            ->setAttribute('code.lineno', '122')->startSpan();
+            ->setAttribute('code.namespace', $classname)
+            ->setAttribute('code.filepath', $filename)
+            ->setAttribute('code.lineno', $lineno)->startSpan();
         Context::storage()->attach($span->storeInContext(Context::getCurrent()));
     }
 
