@@ -43,7 +43,9 @@ $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
 class Test {
     public static function printString($str): void {
+//        \Middleware\PhpApmTest\Test::callOtelCodeBefore();
         echo $str;
+//        \Middleware\PhpApmTest\Test::callOtelCodeAfter();
     }
 
     public static function printServerDetails($serverJson, $key = ''): void {
@@ -58,7 +60,7 @@ class Test {
         }
     }
 
-    public static function callOtelCodeBefore(): void {
+    /*public static function callOtelCodeBefore(): void {
         global $tracer;
         // $span = $tracer->spanBuilder('DemoClass')->startSpan();
         $span = $tracer->spanBuilder(sprintf('%s::%s', 'DemoClass', 'run'))
@@ -75,6 +77,8 @@ class Test {
         $span = Span::fromContext($scope->context());
         $span->setStatus(StatusCode::STATUS_OK);
         $span->end();
-    }
+    }*/
 
 }
+
+Test::printString('Hello..called. from DemoClass');
