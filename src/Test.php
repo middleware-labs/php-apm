@@ -44,6 +44,7 @@ $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
 class Test {
     public static function printString($str): void {
+//        \Middleware\PhpApmTest\Test::callOtelCodeCombined(get_called_class(), __FUNCTION__, __FILE__, __LINE__);
 //        \Middleware\PhpApmTest\Test::callOtelCodeBefore();
         echo $str;
 //        \Middleware\PhpApmTest\Test::callOtelCodeAfter();
@@ -74,6 +75,21 @@ class Test {
 
     public static function callOtelCodeAfter(): void {
         $scope = Context::storage()->scope();
+        $scope?->detach();
+        $span = Span::fromContext($scope->context());
+        $span->setStatus(StatusCode::STATUS_OK);
+        $span->end();
+    }
+
+    public static function callOtelCodeCombined(?string $classname, string $functionname, ?string $filename, ?int $lineno): void {
+        global $tracer;
+        $span = $tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
+            ->setAttribute('function', 'run()')
+            ->setAttribute('code.namespace', $classname)
+            ->setAttribute('code.filepath', $filename)
+            ->setAttribute('code.lineno', $lineno)->startSpan();
+        $scope = $span->activate();
+
         $scope?->detach();
         $span = Span::fromContext($scope->context());
         $span->setStatus(StatusCode::STATUS_OK);
