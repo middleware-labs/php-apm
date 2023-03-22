@@ -60,7 +60,7 @@ final class PhpApmCollector {
         ?string $className,
         string $functionName,
         ?string $fileName,
-        ?iterable $attributes): void {
+        ?iterable $attributes = null): void {
         $span = $this->tracer->spanBuilder(sprintf('%s::%s', $className, $functionName))
             ->setAttribute('service.name', $this->serviceName)
             ->setAttribute('project.name', $this->projectName)
@@ -106,7 +106,7 @@ final class PhpApmCollector {
         ?string $className,
         string $functionName,
         ?string $fileName,
-        ?iterable $attributes): void {
+        ?iterable $attributes = null): void {
         $this->preTracingCall($className, $functionName, $fileName, $attributes);
         $this->postTracingCall();
     }
