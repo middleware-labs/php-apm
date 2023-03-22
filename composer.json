@@ -25,7 +25,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Middleware\\PhpApmTest\\": "src/"
+            "Middleware\\PhpApmTest\\": "",
+            "Middleware\\PhpApmTest2\\": "src/"
         }
     },
     "minimum-stability": "dev",
