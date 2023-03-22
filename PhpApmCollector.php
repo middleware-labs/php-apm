@@ -26,7 +26,9 @@ final class PhpApmCollector {
 
     public function __construct(string $serviceName) {
 
-        assert(!isset($requiredArg), 'Service name is required.');
+        if (empty($serviceName)) {
+            throw new \Exception('Service name is must.');
+        }
 
         $this->serviceName = $serviceName;
 
@@ -44,16 +46,16 @@ final class PhpApmCollector {
     }
 
     public function preTracingCall(
-        ?string $classname,
-        string $functionname,
-        ?string $filename,
-        ?int $lineno): void {
-        $span = $this->tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
+        ?string $className,
+        string $functionName,
+        ?string $fileName,
+        ?int $lineNo): void {
+        $span = $this->tracer->spanBuilder(sprintf('%s::%s', $className, $functionName))
             ->setAttribute('service.name', $this->serviceName)
-            ->setAttribute('function', $functionname)
-            ->setAttribute('code.namespace', $classname)
-            ->setAttribute('code.filepath', $filename)
-            ->setAttribute('code.lineno', $lineno)->startSpan();
+            ->setAttribute('function', $functionName)
+            ->setAttribute('code.namespace', $className)
+            ->setAttribute('code.filepath', $fileName)
+            ->setAttribute('code.lineno', $lineNo)->startSpan();
         // $span = $tracer
         //     ->spanBuilder(sprintf('%s %s', $request->getMethod(), $request->getUri()))
         //     ->setSpanKind(SpanKind::KIND_CLIENT)
@@ -79,11 +81,11 @@ final class PhpApmCollector {
     }
 
     public function tracingCall(
-        ?string $classname,
-        string $functionname,
-        ?string $filename,
-        ?int $lineno): void {
-        $this->preTracingCall($classname, $functionname, $filename, $lineno);
+        ?string $className,
+        string $functionName,
+        ?string $fileName,
+        ?int $lineNo): void {
+        $this->preTracingCall($className, $functionName, $fileName, $lineNo);
         $this->postTracingCall();
     }
 }

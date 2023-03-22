@@ -15,8 +15,8 @@ class Test {
 
 class DemoClass {
     public static function runCode(): void {
-        $mwCollector = new PhpApmCollector();
-        $mwCollector->tracingCall('apbb123', get_called_class(), __FUNCTION__, __FILE__, __LINE__);
+        $mwCollector = new PhpApmCollector('mw-php-app-test-here');
+        $mwCollector->tracingCall(get_called_class(), __FUNCTION__, __FILE__, __LINE__);
         // $mwCollector->preTracingCall('apbb123', get_called_class(), __FUNCTION__, __FILE__, __LINE__);
 
         Test::printString('Hello..called. from DemoClass' . PHP_EOL);
@@ -27,7 +27,7 @@ class DemoClass {
 
 /*class TestClass {
     public static function printString(): void {
-
+        $mwCollector = new PhpApmCollector('check-apm');
         $mwCollector->tracingCall('apbb123', get_called_class(), __FUNCTION__, __FILE__, __LINE__);
 
         Test::printString('Hello..called. from TestClass' . PHP_EOL);
