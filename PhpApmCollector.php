@@ -8,28 +8,33 @@ use OpenTelemetry\Context\Context;
 use OpenTelemetry\API\Trace\StatusCode;
 use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
 use OpenTelemetry\Contrib\Otlp\SpanExporter;
+use OpenTelemetry\SDK\Common\Attribute\Attributes;
+use OpenTelemetry\SDK\Common\Configuration\Variables;
+use OpenTelemetry\SDK\Resource\ResourceInfo;
 use OpenTelemetry\Sdk\Trace\Span;
 use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
 use OpenTelemetry\SDK\Trace\TracerProvider;
-//use OpenTelemetry\SDK\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
-
-//putenv('OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:9321/v1/traces');
-//putenv('OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
-putenv('OTEL_PHP_AUTOLOAD_ENABLED=true');
+use OpenTelemetry\SemConv\ResourceAttributes;
 
 final class PhpApmCollector {
 
     private int $exportPort = 9321;
+    private string $projectName;
     private string $serviceName;
     private TracerInterface $tracer;
 
-    public function __construct(string $serviceName) {
+    public function __construct(string $projectName, string $serviceName) {
 
-        if (empty($serviceName)) {
-            throw new \Exception('Service name is must.');
+        if (empty($projectName)) {
+            $projectName = 'Project-'. getmypid();
         }
 
+        if (empty($serviceName)) {
+            $serviceName = 'Service-'. getmypid();
+        }
+
+        $this->projectName = $projectName;
         $this->serviceName = $serviceName;
 
         $transport = (new OtlpHttpTransportFactory())->create(
@@ -40,9 +45,15 @@ final class PhpApmCollector {
 
         $tracerProvider = new TracerProvider(
             new SimpleSpanProcessor($exporter),
+            null,
+            ResourceInfo::create(Attributes::create([
+                'project.name' => $projectName,
+                ResourceAttributes::SERVICE_NAME => $serviceName,
+                Variables::OTEL_PHP_AUTOLOAD_ENABLED => true,
+            ]))
         );
 
-        $this->tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
+        $this->tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php', '0.1.0');
     }
 
     public function preTracingCall(
@@ -52,10 +63,12 @@ final class PhpApmCollector {
         ?int $lineNo): void {
         $span = $this->tracer->spanBuilder(sprintf('%s::%s', $className, $functionName))
             ->setAttribute('service.name', $this->serviceName)
-            ->setAttribute('function', $functionName)
+            ->setAttribute('project.name', $this->projectName)
+            ->setAttribute('code.function', $functionName)
             ->setAttribute('code.namespace', $className)
             ->setAttribute('code.filepath', $fileName)
-            ->setAttribute('code.lineno', $lineNo)->startSpan();
+            ->setAttribute('code.lineno', $lineNo)
+            ->startSpan();
         // $span = $tracer
         //     ->spanBuilder(sprintf('%s %s', $request->getMethod(), $request->getUri()))
         //     ->setSpanKind(SpanKind::KIND_CLIENT)
