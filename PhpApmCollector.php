@@ -19,10 +19,17 @@ use OpenTelemetry\API\Trace\TracerInterface;
 putenv('OTEL_PHP_AUTOLOAD_ENABLED=true');
 
 final class PhpApmCollector {
+
+    private int $exportPort = 9321;
+    private string $serviceName;
     private TracerInterface $tracer;
-    public function __construct() {
+
+    public function __construct(?string $serviceName = 'mw-php-apm') {
+
+        $this->serviceName = $serviceName;
+
         $transport = (new OtlpHttpTransportFactory())->create(
-                'http://localhost:9321/v1/traces',
+                'http://localhost:' . $this->exportPort . '/v1/traces',
                 'application/x-protobuf');
 
         $exporter = new SpanExporter($transport);
@@ -35,13 +42,12 @@ final class PhpApmCollector {
     }
 
     public function preTracingCall(
-        ?string $servicename,
         ?string $classname,
         string $functionname,
         ?string $filename,
         ?int $lineno): void {
         $span = $this->tracer->spanBuilder(sprintf('%s::%s', $classname, $functionname))
-            ->setAttribute('service.name', $servicename)
+            ->setAttribute('service.name', $this->serviceName)
             ->setAttribute('function', $functionname)
             ->setAttribute('code.namespace', $classname)
             ->setAttribute('code.filepath', $filename)
@@ -71,12 +77,11 @@ final class PhpApmCollector {
     }
 
     public function tracingCall(
-        ?string $servicename,
         ?string $classname,
         string $functionname,
         ?string $filename,
         ?int $lineno): void {
-        $this->preTracingCall($servicename, $classname, $functionname, $filename, $lineno);
+        $this->preTracingCall($classname, $functionname, $filename, $lineno);
         $this->postTracingCall();
     }
 }
