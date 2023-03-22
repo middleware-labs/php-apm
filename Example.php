@@ -17,7 +17,7 @@ class DemoClass {
     public static function runCode(): void {
         $mwCollector = new PhpApmCollector('test-project-51', 'test-service-51');
         $mwCollector->tracingCall(get_called_class(), __FUNCTION__, __FILE__, __LINE__);
-        // $mwCollector->preTracingCall('apbb123', get_called_class(), __FUNCTION__, __FILE__, __LINE__);
+        // $mwCollector->preTracingCall(get_called_class(), __FUNCTION__, __FILE__, __LINE__);
 
         Test::printString('Hello..called. from DemoClass' . PHP_EOL);
         // $mwCollector->postTracingCall();

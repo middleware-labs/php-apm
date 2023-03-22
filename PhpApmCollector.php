@@ -24,7 +24,7 @@ final class PhpApmCollector {
     private string $serviceName;
     private TracerInterface $tracer;
 
-    public function __construct(string $projectName, string $serviceName) {
+    public function __construct(string $projectName = null, string $serviceName = null) {
 
         if (empty($projectName)) {
             $projectName = 'Project-'. getmypid();
