@@ -38,8 +38,8 @@ final class PhpApmCollector {
         $this->serviceName = $serviceName;
 
         $transport = (new OtlpHttpTransportFactory())->create(
-                'http://localhost:' . $this->exportPort . '/v1/traces',
-                'application/x-protobuf');
+            'http://localhost:' . $this->exportPort . '/v1/traces',
+            'application/x-protobuf');
 
         $exporter = new SpanExporter($transport);
 
@@ -60,15 +60,21 @@ final class PhpApmCollector {
         ?string $className,
         string $functionName,
         ?string $fileName,
-        ?int $lineNo): void {
+        ?iterable $attributes): void {
         $span = $this->tracer->spanBuilder(sprintf('%s::%s', $className, $functionName))
             ->setAttribute('service.name', $this->serviceName)
             ->setAttribute('project.name', $this->projectName)
             ->setAttribute('code.function', $functionName)
             ->setAttribute('code.namespace', $className)
-            ->setAttribute('code.filepath', $fileName)
-            ->setAttribute('code.lineno', $lineNo)
-            ->startSpan();
+            ->setAttribute('code.filepath', $fileName);
+
+        if (!empty($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $span->setAttribute($key, $value);
+            }
+        }
+        $span = $span->startSpan();
+
         // $span = $tracer
         //     ->spanBuilder(sprintf('%s %s', $request->getMethod(), $request->getUri()))
         //     ->setSpanKind(SpanKind::KIND_CLIENT)
@@ -86,8 +92,11 @@ final class PhpApmCollector {
     }
 
     public function postTracingCall(): void {
-        $scope = Context::storage()->scope();
-        $scope?->detach();
+        if (!$scope = Context::storage()->scope()) {
+            return;
+        }
+
+        $scope->detach();
         $span = Span::fromContext($scope->context());
         $span->setStatus(StatusCode::STATUS_OK);
         $span->end();
@@ -97,8 +106,8 @@ final class PhpApmCollector {
         ?string $className,
         string $functionName,
         ?string $fileName,
-        ?int $lineNo): void {
-        $this->preTracingCall($className, $functionName, $fileName, $lineNo);
+        ?iterable $attributes): void {
+        $this->preTracingCall($className, $functionName, $fileName, $attributes);
         $this->postTracingCall();
     }
 }
