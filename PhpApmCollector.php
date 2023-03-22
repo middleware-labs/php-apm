@@ -24,7 +24,9 @@ final class PhpApmCollector {
     private string $serviceName;
     private TracerInterface $tracer;
 
-    public function __construct(?string $serviceName = 'mw-php-apm') {
+    public function __construct(string $serviceName) {
+
+        assert(!isset($requiredArg), 'Service name is required.');
 
         $this->serviceName = $serviceName;
 
